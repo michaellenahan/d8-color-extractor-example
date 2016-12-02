@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains color_extractor.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function color_extractor_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the color_extractor module.
+    case 'help.page.color_extractor':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('See: https://github.com/michaellenahan/using-composer-drupal-8-modules') . '</p>';
+      return $output;
+
+    default:
+  }
+}

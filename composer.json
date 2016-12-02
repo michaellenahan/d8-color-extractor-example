@@ -1,0 +1,14 @@
+{
+  "name": "drupal/color_extractor",
+  "type": "drupal-module",
+  "description": "See: https://github.com/michaellenahan/using-composer-drupal-8-modules",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/color_extractor",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/color_extractor",
+    "source": "http://cgit.drupalcode.org/color_extractor"
+  },
+  "require": { }
+}

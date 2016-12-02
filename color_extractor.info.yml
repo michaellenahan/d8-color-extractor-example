@@ -1,0 +1,5 @@
+name: color_extractor
+type: module
+description: See: https://github.com/michaellenahan/using-composer-drupal-8-modules
+core: 8.x
+package: Custom
