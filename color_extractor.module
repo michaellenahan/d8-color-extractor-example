@@ -5,20 +5,46 @@
  * Contains color_extractor.module.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
+use League\ColorExtractor\Color;
+use League\ColorExtractor\ColorExtractor;
+use League\ColorExtractor\Palette;
 
 /**
- * Implements hook_help().
+ * Implements hook_form_FORM_ID_alter() for the node_article_edit_form() form.
  */
-function color_extractor_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
-    // Main module help for the color_extractor module.
-    case 'help.page.color_extractor':
-      $output = '';
-      $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('See: https://github.com/michaellenahan/using-composer-drupal-8-modules') . '</p>';
-      return $output;
+function color_extractor_form_node_article_edit_form_alter(&$form, FormStateInterface &$form_state, $form_id) {
+  // foreach loop code copied from: menu_ui_form_node_form_alter().
+  foreach (array_keys($form['actions']) as $action) {
+    if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+      $form['actions'][$action]['#submit'][] = '_color_extractor_form_node_article_edit_form_submit';
+    }
+  }
+}
 
-    default:
+/**
+ * Form submission handler.
+ *
+ * This expects you to have:
+ * - A field_image on the article content type.
+ * - A field_color on the article content type.
+ * field_color is from: https://www.drupal.org/project/color_field
+ */
+function _color_extractor_form_node_article_edit_form_submit($form, FormStateInterface $form_state) {
+  // Get the submitted node.
+  if ($node = $form_state->getFormObject()->getEntity()) {
+    /** @var $node Drupal\node\Entity\Node */
+    if ($node->hasField('field_image') && $node->hasField('field_color')) {
+      $image = $node->get('field_image')->entity->uri->value;
+      $palette = Palette::fromFilename($image);
+      $extractor = new ColorExtractor($palette);
+      // Get the 8 most representative colors.
+      $colors = $extractor->extract(8);
+      foreach ($colors as $key => $color) {
+        $hex_code = Color::fromIntToHex($color);
+        $node->field_color->appendItem($hex_code);
+      }
+      $node->save();
+    }
   }
 }
